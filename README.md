@@ -20,6 +20,8 @@ Arquitectura de la máquina:
 - Procesador: 11th Gen Intel(R) Core(TM) i5-11300H @ 3.10GHz   3.11 GHz
 - Tarjeta gráfica: 3050 Nvidia 
 
+Pruebas con Valores Grandes:
+![](https://github.com/Sntgo22/IntroPP2201527/blob/main/imgs/Pruebas%20Matrices%20Grandes.png)
 
 En conclusión, la programación paralela puede mejorar significativamente el rendimiento de tareas computacionalmente intensivas como la multiplicación de matrices. La biblioteca OpenMP proporciona una forma sencilla y eficaz de paralelizar código y, con una optimización cuidadosa, se pueden lograr incluso aceleraciones considerables.
 
