@@ -1,54 +1,62 @@
-#include <iostream>
-#include <vector>
-#include <chrono>
+// C program to multiply two matrices
+#include <stdio.h>
+#include <stdlib.h>
 #include <omp.h>
 
-using namespace std;
-const int N = 1000;
+// matrix dimensions so that we dont have to pass them as
+// parametersmat1[R1][C1] and mat2[R2][C2]
+#define R1 2 // number of rows in Matrix-1
+#define C1 2 // number of columns in Matrix-1
+#define R2 2 // number of rows in Matrix-2
+#define C2 3 // number of columns in Matrix-2
+
+void multiplyMatrix(int m1[][C1], int m2[][C2])
+{
+	int result[R1][C2];
+
+	printf("Resultant Matrix is:\n");
+
+	#pragma omp parallel for
+	for (int i = 0; i < R1; i++) {
+		for (int j = 0; j < C2; j++) {
+			result[i][j] = 0;
+
+			for (int k = 0; k < R2; k++) {
+				result[i][j] += m1[i][k] * m2[k][j];
+			}
+
+			#pragma omp critical
+			printf("%d\t", result[i][j]);
+		}
+
+		#pragma omp critical
+		printf("\n");
+	}
+}
+
+// Driver code
 int main()
 {
-vector<vector<int>> A(N, vector<int>(N));
-vector<vector<int>> B(N, vector<int>(N));
-vector<vector<int>> C(N, vector<int>(N));
+	// R1 = 4, C1 = 4 and R2 = 4, C2 = 4 (Update these
+	// values in MACROs)
+	int m1[R1][C1] = { { 1, 1 }, { 2, 2 } };
 
-// Inicializar las matrices A y B con valores random
-for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++) {
-        A[i][j] = rand() % 100;
-        B[i][j] = rand() % 100;
-    }
-}
+	int m2[R2][C2] = { { 1, 1, 1 }, { 2, 2, 2 } };
 
-auto start_serial = chrono::high_resolution_clock::now();
-for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++) {
-        int sum = 0;
-        for (int k = 0; k < N; k++) {
-            sum += A[i][k] * B[k][j];
-        }
-        C[i][j] = sum;
-    }
-}
-auto end_serial = chrono::high_resolution_clock::now();
-auto duration_serial = chrono::duration_cast<chrono::milliseconds>(end_serial - start_serial);
+	// if coloumn of m1 not equal to rows of m2
+	if (C1 != R2) {
+		printf("The number of columns in Matrix-1 must be "
+			"equal to the number of rows in "
+			"Matrix-2\n");
+		printf("Please update MACROs value according to "
+			"your array dimension in "
+			"#define section\n");
 
-// Desarrollar la multiplicación en paralelo usando OpenMP
-   auto start_parallel = chrono::high_resolution_clock::now();
-   #pragma omp parallel for
-   for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            int sum = 0;
-            for (int k = 0; k < N; k++) {
-                sum += A[i][k] * B[k][j];
-            }
-            C[i][j] = sum;
-        }
-    }
-    auto end_parallel = chrono::high_resolution_clock::now();
-    auto duration_parallel = chrono::duration_cast<chrono::milliseconds>(end_parallel - start_parallel);
+		exit(EXIT_FAILURE);
+	}
 
-// Desplegar los tiempos tomados de cada aproximación
-cout << "Time taken for serial matrix multiplication: " << duration_serial.count() << " milliseconds" << endl;
-cout << "Time taken for parallel matrix multiplication: " << duration_parallel.count() << " milliseconds" << endl;
-    return 0;
+	// Function call
+	multiplyMatrix(m1, m2);
+
+	return 0;
 }
