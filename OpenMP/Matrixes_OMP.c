@@ -1,62 +1,67 @@
-// C program to multiply two matrices
+// Este código tuvo como referencia la página de: https://www.geeksforgeeks.org/c-matrix-multiplication/ 
+// Modificado por: Santiago Bolaños 
+// Multiplicación de Matrices con paralezación 
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
+#include <time.h>
+#include <omp.h>  // Agregado para OpenMP
 
-// matrix dimensions so that we dont have to pass them as
-// parametersmat1[R1][C1] and mat2[R2][C2]
-#define R1 2 // number of rows in Matrix-1
-#define C1 2 // number of columns in Matrix-1
-#define R2 2 // number of rows in Matrix-2
-#define C2 3 // number of columns in Matrix-2
+// definir seccion
+#define R1 2
+#define C1 2
+#define R2 2
+#define C2 3
 
 void multiplyMatrix(int m1[][C1], int m2[][C2])
 {
-	int result[R1][C2];
+    int result[R1][C2];
 
-	printf("Resultant Matrix is:\n");
+#pragma omp parallel for collapse(2)
+    for (int i = 0; i < R1; i++) {
+        for (int j = 0; j < C2; j++) {
+            result[i][j] = 0;
 
-	#pragma omp parallel for
-	for (int i = 0; i < R1; i++) {
-		for (int j = 0; j < C2; j++) {
-			result[i][j] = 0;
+            for (int k = 0; k < R2; k++) {
+                result[i][j] += m1[i][k] * m2[k][j];
+            }
+        }
+    }
 
-			for (int k = 0; k < R2; k++) {
-				result[i][j] += m1[i][k] * m2[k][j];
-			}
+    printf("La matriz resultante es:\n");
 
-			#pragma omp critical
-			printf("%d\t", result[i][j]);
-		}
+    for (int i = 0; i < R1; i++) {
+        for (int j = 0; j < C2; j++) {
+            printf("%d\t", result[i][j]);
+        }
 
-		#pragma omp critical
-		printf("\n");
-	}
+        printf("\n");
+    }
 }
 
-// Driver code
 int main()
 {
-	// R1 = 4, C1 = 4 and R2 = 4, C2 = 4 (Update these
-	// values in MACROs)
-	int m1[R1][C1] = { { 1, 1 }, { 2, 2 } };
+    int m1[R1][C1] = {{1, 1}, {2, 2}};
+    int m2[R2][C2] = {{1, 1, 1}, {2, 2, 2}};
 
-	int m2[R2][C2] = { { 1, 1, 1 }, { 2, 2, 2 } };
+    clock_t start_time = clock();
 
-	// if coloumn of m1 not equal to rows of m2
-	if (C1 != R2) {
-		printf("The number of columns in Matrix-1 must be "
-			"equal to the number of rows in "
-			"Matrix-2\n");
-		printf("Please update MACROs value according to "
-			"your array dimension in "
-			"#define section\n");
+    if (C1 != R2) {
+        printf("El numero de columnas en M1 debería ser "
+               "Igual al numero de filas de  "
+               "Matrix-2\n");
+        printf("Por favor cambia los valores "
+               "de tu matriz en "
+               "#definir seccion \n");
 
-		exit(EXIT_FAILURE);
-	}
+        exit(EXIT_FAILURE);
+    }
 
-	// Function call
-	multiplyMatrix(m1, m2);
+    multiplyMatrix(m1, m2);
 
-	return 0;
+    clock_t end_time = clock();
+    double execution_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+    printf("Tiempo de ejecución: %f segundos\n", execution_time);
+
+    return 0;
 }
