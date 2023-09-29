@@ -23,6 +23,9 @@ Arquitectura de la máquina:
 Pruebas con Valores Grandes:
 ![](https://github.com/Sntgo22/IntroPP2201527/blob/main/imgs/Pruebas%20Matrices%20Grandes.png)
 
+Pruebas con Valores Pequeños:
+![](https://github.com/Sntgo22/IntroPP2201527/blob/main/imgs/Pruebas%20Matrices%20Pequeñas.png)
+
 En conclusión, la programación paralela puede mejorar significativamente el rendimiento de tareas computacionalmente intensivas como la multiplicación de matrices. La biblioteca OpenMP proporciona una forma sencilla y eficaz de paralelizar código y, con una optimización cuidadosa, se pueden lograr incluso aceleraciones considerables.
 
 
